@@ -1,0 +1,17 @@
+{
+  "name": "fd_sequelize",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "start": " ./server.js "
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "demon": "^1.4.4",
+    "express": "^4.17.1",
+    "pg": "^8.5.1"
+  }
+}
