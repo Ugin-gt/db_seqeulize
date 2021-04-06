@@ -1,23 +1,21 @@
 'use strict';
 const { Model } = require('sequelize');
 const { isAfter } = require('date-fns');
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate (models) {
-      // define association here
+      User.hasMany(models.Task, {
+        foreignKey: 'userId',
+      });
     }
   }
   User.init(
     {
       firstName: {
         field: 'first_name',
-        type: DataTypes.STRING,
         allowNull: false,
+        type: DataTypes.STRING,
         validate: {
           notNull: true,
           notEmpty: true,
@@ -25,17 +23,17 @@ module.exports = (sequelize, DataTypes) => {
       },
       lastName: {
         field: 'last_name',
-        type: DataTypes.STRING,
         allowNull: false,
+        type: DataTypes.STRING,
         validate: {
           notNull: true,
           notEmpty: true,
         },
       },
       email: {
-        type: DataTypes.STRING,
-        allowNull: false,
         unique: true,
+        allowNull: false,
+        type: DataTypes.STRING,
         validate: {
           notNull: true,
           notEmpty: true,
@@ -44,28 +42,26 @@ module.exports = (sequelize, DataTypes) => {
       },
       password: {
         field: 'password_hash',
-        type: DataTypes.TEXT,
         allowNull: false,
+        type: DataTypes.TEXT,
+        set (v) {
+          this.setDataValue('password', 'new_hash');
+        },
+      },
+      birthday: {
+        type: DataTypes.DATEONLY,
         validate: {
-          notNull: true,
-          notEmpty: true,
+          isDate: true,
+          isValidDate (value) {
+            if (isAfter(new Date(value), new Date())) {
+              throw new Error('Check your birthday, man');
+            }
+          },
         },
       },
       isMale: {
         field: 'is_male',
         type: DataTypes.BOOLEAN,
-      },
-
-      birthday: {
-        type: DataTypes.DATEONLY,
-        validate: {
-          isDate: true,
-          isCorrect (value) {
-            if (isAfter(new Date(value), new Date())) {
-              throw new Error('Enter a valid date');
-            }
-          },
-        },
       },
     },
     {
